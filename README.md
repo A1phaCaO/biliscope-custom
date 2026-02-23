@@ -1,4 +1,4 @@
-# BiliScope
+# 此项目Fork于BiliScope，添加了视频质量Tag的自定义设置
 
 [![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/ekmbchepcdggpcbdpjpijphjiiiimfga)](https://chromewebstore.google.com/detail/biliscope-bilibili%E6%8F%92%E4%BB%B6%EF%BC%8C%E7%9F%A5%E9%81%93ta/ekmbchepcdggpcbdpjpijphjiiiimfga?hl=zh-CN)
 [![Edge Add-on Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fppfempmgnmhbeoanbndlackmlolejegm&query=%24.version&prefix=v&label=edge%20add-on&color=%23ee7a3b)](https://microsoftedge.microsoft.com/addons/detail/biliscope/ppfempmgnmhbeoanbndlackmlolejegm)
