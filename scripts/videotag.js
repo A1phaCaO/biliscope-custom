@@ -6,7 +6,7 @@ function VideoTagManager() {
     this.tagWrapper = null;
 }
 
-VideoTagManager.prototype.clear = function() {
+VideoTagManager.prototype.clear = function () {
     this.tags = new Set();
     this.target = null;
     this.videoId = null;
@@ -16,7 +16,7 @@ VideoTagManager.prototype.clear = function() {
     }
 }
 
-VideoTagManager.prototype.updateTarget = function(target) {
+VideoTagManager.prototype.updateTarget = function (target) {
     if (target == this.target) {
         return false;
     }
@@ -25,11 +25,11 @@ VideoTagManager.prototype.updateTarget = function(target) {
     return this.targetHasImage;
 }
 
-VideoTagManager.prototype.updateVideoId = function(videoId) {
+VideoTagManager.prototype.updateVideoId = function (videoId) {
     this.videoId = videoId;
 }
 
-VideoTagManager.prototype.updateData = function(data) {
+VideoTagManager.prototype.updateData = function (data) {
     let newTag = false;
 
     if (data["api"] == "reply") {
@@ -69,12 +69,34 @@ VideoTagManager.prototype.updateData = function(data) {
             }
         }
     } else if (data["api"] == "view") {
-        const favorite = data.payload?.stat?.favorite;
-        const coin = data.payload?.stat?.coin;
+        const favorite = data.payload?.stat?.favorite; // 收藏
+        const coin = data.payload?.stat?.coin; // 投币
+        const like = data.payload?.stat?.like; // 点赞
+        const view = data.payload?.stat?.view; // 浏览
 
-        if (favorite / coin > 10) {
-            this.tags.add("低质");
-            newTag = true;
+        if (favorite != null && coin != null && like != null && view > 0) {
+            const normalizedLikeRate = (coin + 0.25 * like) / Math.pow(view, 0.85);
+
+            const favoriteDenominator = 0.9 * coin + 0.1 * 0.33 * like;
+            if (favoriteDenominator > 0 && favorite / favoriteDenominator > 10) {
+                this.tags.add("低质*");
+                newTag = true;
+            }
+
+            if (normalizedLikeRate < 0.06) {
+                this.tags.add("低质" + (Math.round(normalizedLikeRate * 100) / 100).toString().replace(/^0?\./, '.'));
+                newTag = true;
+            }
+
+            if (normalizedLikeRate > 0.45) {
+                this.tags.add("高质" + (Math.round(normalizedLikeRate * 10) / 10).toString());
+                newTag = true;
+            }
+
+            if (view < 1000) {
+                this.tags.add("小众");
+                newTag = true;
+            }
         }
 
         const staffs = data.payload?.staff;
@@ -91,7 +113,7 @@ VideoTagManager.prototype.updateData = function(data) {
         if (!this.tagWrapper) {
             this.tagWrapper = document.createElement("div");
             this.tagWrapper.className = "biliscope-video-tag-wrapper";
-            if (this.target.getAttribute("dyn-id")){
+            if (this.target.getAttribute("dyn-id")) {
                 this.target.firstChild.appendChild(this.tagWrapper);
             } else {
                 this.target.appendChild(this.tagWrapper);
